@@ -1,0 +1,32 @@
+﻿<template id="table-filter-pagination-template">
+    <div style="display: flex;flex-wrap: wrap;">
+        <div class="table-filter-pagination-filter-container" style="width: 100%;margin: 18px 0px;">
+            <div class="col-md-3 col-xs-3 table-filter-pagination-filter">
+                <label for="table-filter-pagination-filter"> Filtro </label>
+                <input id="table-filter-pagination-filter" v-model="filter" v-on:keyup="gerarContentTabela" class="form-control" />
+            </div>
+            <div class="col-md-3 col-xs-3 table-filter-pagination-results-input">
+                <label for="table-filter-pagination-range"> Número de resultados por página </label>
+                <input id="table-filter-pagination-range" class="form-control" type="number" v-model="resultsPerPage" v-on:keyup="gerarContentTabela" />
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <template>
+                    <slot name="table-header"></slot>
+                </template>
+            </thead>
+            <tbody>
+                <template v-for="dado in content[paginaSelecionada]">
+                    <slot name="table-rows" :dado="dado"></slot>
+                </template>
+            </tbody>
+        </table>
+        <div>
+            <button class="btn btn-primary" v-for="page in pages" v-on:click="onBtnPageClick(page)">
+                {{ page }}
+            </button>
+        </div>
+    </div>
+</template>
