@@ -15,3 +15,7 @@ _O class Vue Component não era necessário, maaaaaaaas deixa mais organizado e 
 ## Uso
 
 Ainda farei essa parte pq to ocupado.
+
+## Melhorias
+
+Ainda pretendo melhorar este componente
