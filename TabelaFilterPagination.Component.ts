@@ -1,7 +1,16 @@
 ﻿@VueClassComponent.default({
     name: 'table-filter-pagination-component',
-    props: ["filterBy", "urlData", "dadosProps","intervalTime"],
-    template: '#table-filter-pagination-template'
+    props: ["filterBy", "urlData", "dadosProps","intervalTime","debug"],
+    template: '#table-filter-pagination-template',
+    watch: {
+        "dadosProps": function () {
+            if (this.debug) {
+                console.log("-------------------------------------------------- MUDANÇA DETECTADA --------------------------------------------------");
+                console.log("Montando a tabela novamente.");
+            }
+            this.pegarDadosGerarTabela();
+        }
+    }
 })
 class TableFilterPaginationComponent extends Vue {
     interval : any = null;
@@ -28,7 +37,7 @@ class TableFilterPaginationComponent extends Vue {
     public geraInterval() {
         var intervalTime = 5000;
         if (this.intervalTime)
-            intervalTime = this.intervalTime;
+            intervalTime = this.intervalTime * 1000;
 
         return setInterval(() => {
             $.get(this.urlData, (data) => {
@@ -47,7 +56,7 @@ class TableFilterPaginationComponent extends Vue {
         var content = {};
         var pagina = 0;
 
-        if (this.filterBy)
+        if (this.filterBy && this.filterBy.length > 0)
             dados = this.filtrarDados(dados, this.filterBy);
 
         while (dados.length > 0 && parseInt(this.resultsPerPage) > 0) {
@@ -65,12 +74,35 @@ class TableFilterPaginationComponent extends Vue {
             var inclui = false;
 
             _.each(filtros, (propriedade) => {
+                if (propriedade == null || dado == null) {
+                    if (this.debug) {
+                        console.log("-------------------------------------------------- ERRO --------------------------------------------------");
+                        console.log("A propriedade ou o dado são nulos. Verifique se está passando tudo no formato correto!");
+                        console.log("Dado:", dado);
+                        console.log("Propriedade", propriedade);
+                    }
+                    
+                    return;
+                }
                 var dadoFiltro = this.encontraPropriedade(dado, propriedade);
 
                 if (dadoFiltro == null) {
-                    console.log("A propriedade { " + propriedade.toString().replace(",", " => ") + " } não foi encontrada.");
+                    if (this.debug) {
+                        console.log("-------------------------------------------------- ERRO --------------------------------------------------");
+                        console.log("A propriedade { " + propriedade.toString().replace(",", " => ") + " } não foi encontrada.");
+                    }
+                    
                     return;
                 }
+
+                if (this.debug) {
+                    console.log("-------------------------------------------------- SUCESSO --------------------------------------------------");
+                    console.log("Dado para filtro encontrado com sucesso.");
+                    console.log("Dado", dado);
+                    console.log("Propriedade", propriedade);
+                    console.log("Dado para filtro", dadoFiltro);
+                }
+
                 if (typeof (dadoFiltro) == "string" && (dadoFiltro).toLowerCase().indexOf(this.filter.toLowerCase()) != -1) {
                     inclui = true;
                 }
@@ -80,7 +112,12 @@ class TableFilterPaginationComponent extends Vue {
                             inclui = true;
                     }
                     catch (e) {
-                        console.log(e);
+                        if (this.debug) {
+                            console.log("-------------------------------------------------- ERRO --------------------------------------------------");
+                            console.log("Algo deu errado ao tentar converter o dado para string.");
+                            console.log(e);
+                        }
+                        return;
                     }
                 }
             });
