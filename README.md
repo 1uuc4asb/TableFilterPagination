@@ -18,9 +18,12 @@ Ainda farei essa parte pq to ocupado.
 
 ## Melhorias
 
+- Melhorar a forma como se declara os itens que devem interferir na busca... _talvez_
+
+- Colocar albo bonitinho pra indicar que os dados estão carregando (quando se trata de requisições http).
 Ainda pretendo melhorar este componente
 
-## Erros para corrigirr _(Pra eu lembrar)_
+## Erros para corrigir _(Pra eu lembrar)_
 
 - Evento de mudança de número de resultados por páginas está sendo emitido apenas no onKeyUp. Deve ser emitido também no onChange.
 
