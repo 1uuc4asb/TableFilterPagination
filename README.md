@@ -16,12 +16,13 @@ _O class Vue Component não era necessário, maaaaaaaas deixa mais organizado e 
 
 Ainda farei essa parte pq to ocupado.
 
-## Melhorias
-
+## Melhorias (Lista de melhorias que farei, assim que tiver tempo _e vontade..._)
 - Melhorar a forma como se declara os itens que devem interferir na busca... _talvez_
 
-- Colocar albo bonitinho pra indicar que os dados estão carregando (quando se trata de requisições http).
+- Colocar algo bonitinho pra indicar que os dados estão carregando (quando se trata de requisições http).
 Ainda pretendo melhorar este componente
+
+- Selecionar requisição GET ou POST e passar dados, tudo via props. =D
 
 ## Erros para corrigir _(Pra eu lembrar)_
 
