@@ -1,6 +1,6 @@
 ﻿@VueClassComponent.default({
     name: 'table-filter-pagination-component',
-    props: ["filterBy", "urlData", "dadosProps","intervalTime","debug"],
+    props: ["filterBy", "urlData", "dadosProps","intervalTime","debug","isRelatorio"],
     template: '#table-filter-pagination-template',
     watch: {
         "dadosProps": function () {
@@ -15,10 +15,12 @@
 class TableFilterPaginationComponent extends Vue {
     interval : any = null;
     paginaSelecionada: any = 1;
-    pages: any = 0;
+    numeroBasePaginas: any = 1;
+    quantidadeTotalPaginas: any = 0;
     resultsPerPage: any = 10;
-    content: any = {};
+    conteudo: any = {};
     filter: any = "";
+    dados: [];
 
     public mounted() {
         this.pegarDadosGerarTabela();
@@ -30,7 +32,7 @@ class TableFilterPaginationComponent extends Vue {
         }
         else if (this.dadosProps) {
             this.dados = this.dadosProps;
-            this.gerarContentTabela();
+            this.gerarConteudoTabela();
         }
     }
 
@@ -42,7 +44,7 @@ class TableFilterPaginationComponent extends Vue {
         return setInterval(() => {
             $.get(this.urlData, (data) => {
                 this.dados = data;
-                this.gerarContentTabela();
+                this.gerarConteudoTabela();
             });
         }, intervalTime);
     }
@@ -51,9 +53,9 @@ class TableFilterPaginationComponent extends Vue {
         clearInterval(this.interval);
     }
 
-    public gerarContentTabela() {
+    public gerarConteudoTabela() {
         var dados = this.dados;
-        var content = {};
+        var conteudo = {};
         var pagina = 0;
 
         if (this.filterBy && this.filterBy.length > 0)
@@ -61,12 +63,19 @@ class TableFilterPaginationComponent extends Vue {
 
         while (dados.length > 0 && parseInt(this.resultsPerPage) > 0) {
             pagina++;
-            content[pagina] = _.slice(dados, 0, parseInt(this.resultsPerPage));
+            conteudo[pagina] = _.slice(dados, 0, parseInt(this.resultsPerPage));
             dados = _.drop(dados, parseInt(this.resultsPerPage));
         }
 
-        this.content = content;
-        this.pages = pagina;
+        this.conteudo = conteudo;
+        this.quantidadeTotalPaginas = pagina;
+
+        if (this.paginaSelecionada > this.quantidadeTotalPaginas && this.quantidadeTotalPaginas != 0) {
+            this.paginaSelecionada = this.quantidadeTotalPaginas;
+        }
+        if (this.numeroBasePaginas > this.quantidadeTotalPaginas && this.quantidadeTotalPaginas != 0) {
+            this.numeroBasePaginas = this.quantidadeTotalPaginas - this.quantidadeTotalPaginas % 10 + 1;
+        }
     }
 
     public filtrarDados(dados, filtros) {
@@ -141,7 +150,17 @@ class TableFilterPaginationComponent extends Vue {
         }
     }
 
-    public onBtnPageClick (page) {
-        this.paginaSelecionada = page;
+    public onBtnPageClick(pagina) {
+        this.paginaSelecionada = pagina;
+    }
+
+    public proximaPaginaESetarNumeroBase(pagina) {
+        this.numeroBasePaginas = pagina + 1;
+        this.paginaSelecionada = pagina + 1;
+    }
+
+    public paginaAnteriorESetarNumeroBase(pagina) {
+        this.numeroBasePaginas = pagina - 10;
+        this.paginaSelecionada = pagina - 1;
     }
 }
